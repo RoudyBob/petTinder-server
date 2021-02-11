@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize('TBD', 'postgres', 'password', {
+const sequelize = new Sequelize('pettinder', 'postgres', 'password', {
     host: 'localhost',
     dialect: 'postgres'
 });
 
 sequelize.authenticate().then(
     function() {
-        console.log('Connected to workoutLog postgres database.');
+        console.log('Connected to pettinder postgres database.');
     },
     function(err) {
         console.log(err);
