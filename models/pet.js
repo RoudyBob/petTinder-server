@@ -1,5 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     const Pet = sequelize.define('pet', {
+        dogname: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         breed: {
             type: DataTypes.STRING,
             allowNull: false
@@ -8,19 +12,23 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        citylocation: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        statelocation: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         description: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        location: {
+        photourl: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        photo: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        owner_id: {
+        ownerid: {
             type: DataTypes.INTEGER,
             allowNull: false
         }

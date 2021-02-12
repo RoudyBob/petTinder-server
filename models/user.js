@@ -5,9 +5,21 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
-        passwordhash: {
+        password: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        firstname: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        lastname: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        likedpets: {
+            type: DataTypes.ARRAY(DataTypes.DECIMAL),
+            allowNull: true
         }
     })
     return User;

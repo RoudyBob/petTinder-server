@@ -1,4 +1,4 @@
 let express = require('express');
-const User = require('../db').import('../models/user');
+const Pet = require('../db').import('../models/pet');
 let router = express.Router();
 module.exports = router;
