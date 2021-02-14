@@ -22,7 +22,7 @@ router.post('/signup', function (req, res) {
             });
         }
     )
-    .catch(err => res.status(500).json({ error: err}));
+    .catch(err => res.status(500).json({ error: err }));
 });
 
 router.post('/login', function (req, res) {
@@ -45,11 +45,11 @@ router.post('/login', function (req, res) {
                         })
 
                     } else {
-                        res.status(502).send({ error: 'Login Failed'});
+                        res.status(502).send({ error: 'Login Failed' });
                     };
                 }); 
             } else {
-                res.status(500).json({ error: 'User does not exist.'})
+                res.status(500).json({ error: 'User does not exist.' })
             };
         })
     .catch(err => res.status(500).json({error: err}));
