@@ -4,6 +4,13 @@ const Pet = require('../db').import('../models/pet');
 const router = express.Router();
 const validateSession = require ('../middleware/validate-session');
 
+//This endpoint gets the list of all dogs in the database.
+router.get('/', validateSession, (req, res) => {
+    Pet.findAll()
+        .then(pets => res.status(200).json(pets))
+        .catch(err => res.status(500).json({error: err}))
+});
+
 router.post('/', validateSession, function (req, res) {
     const petEntry = {
         dogname: req.body.dogname,
@@ -55,6 +62,35 @@ router.get('/gender/:gender', validateSession, function (req, res) {
     })
     .then(pet => res.status(200).json(pet))
     .catch(err => res.status(500).json({ error: err }));
+});
+
+//This endpoint modifies one pet by ID.  It needs to check that the ownerid matches the user's ID.
+router.put('/:id', validateSession, function (req, res){
+    const updatePet = {
+        dogname: req.body.dogname,
+        breed: req.body.breed,
+        gender: req.body.gender,
+        citylocation: req.body.citylocation,
+        statelocation: req.body.statelocation,
+        description: req.body.description,
+        photourl: req.body.photourl
+    };
+
+    const query = {where: { id: req.params.id, ownerid: req.user.id}};
+
+    Pet.update(updatePet, query)
+    .then(pet => res.status(200).json(pet))
+    .catch(err => res.status(500).json({error:err}))
+});
+
+//This endpoint deletes a pet by id.  It checks that the ownerid matches the user that is logged in.
+
+router.delete('/:id', validateSession, function (req, res) {
+    const query = {where: {id: req.params.id, ownerid: req.user.id}};
+
+    Pet.destroy(query)
+    .then(() => res.status(200).json({message: "Pet Entry Removed"}))
+    .catch((err) => res.status(500).json({error: err}));
 });
 
 // This one gets by city regardless of owner
