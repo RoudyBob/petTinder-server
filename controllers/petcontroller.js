@@ -11,6 +11,14 @@ router.get('/', validateSession, (req, res) => {
         .catch(err => res.status(500).json({error: err}))
 });
 
+router.get('/mine', validateSession, (req, res) => {
+    Pet.findAll({
+        where: { ownerid: req.user.id }
+    })
+    .then(pet => res.status(200).json(pet))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
 router.post('/', validateSession, function (req, res) {
     const petEntry = {
         dogname: req.body.dogname,
@@ -84,7 +92,6 @@ router.put('/:id', validateSession, function (req, res){
 });
 
 //This endpoint deletes a pet by id.  It checks that the ownerid matches the user that is logged in.
-
 router.delete('/:id', validateSession, function (req, res) {
     const query = {where: {id: req.params.id, ownerid: req.user.id}};
 
