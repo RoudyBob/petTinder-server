@@ -55,4 +55,11 @@ router.post('/login', function (req, res) {
     .catch(err => res.status(500).json({error: err}));
 })
 
+// Get all users
+router.get('/owners', function (req, res) {
+    User.findAll()
+    .then(users => res.status(200).json(users))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
 module.exports = router;
