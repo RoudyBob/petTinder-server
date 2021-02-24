@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../db').import('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const validateSession = require ('../middleware/validate-session');
 
 router.post('/signup', function (req, res) {
     User.create({
@@ -60,6 +61,43 @@ router.get('/owners', function (req, res) {
     User.findAll()
     .then(users => res.status(200).json(users))
     .catch(err => res.status(500).json({ error: err }));
+})
+
+// Get user by ID
+router.get('/byid/:id', function (req, res) {
+    User.findOne({
+        where: {id: req.params.id }
+    })
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json({ error: err}));
+})
+
+// Get all users
+router.get('/current', validateSession, function (req, res) {
+    console.log(req.user.id);
+    User.findOne({
+        where: { id: req.user.id }
+    })
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
+// Add Liked Pet to User
+router.put('/:petid', validateSession, function (req, res){
+
+    const updateUser = {
+        username: req.user.username,
+        password: req.user.password,
+        firstname: req.user.firstname,
+        lastname: req.user.lastname,
+        // likedpets: req.user.likedpets.push("5")
+        likedpets: []
+    }
+    const query = { where: { id: req.user.id } }
+
+    User.update(updateUser, query)
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json({error:err}))
 })
 
 module.exports = router;
