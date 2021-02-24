@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../db').import('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const validateSession = require ('../middleware/validate-session');
 
 router.post('/signup', function (req, res) {
     User.create({
@@ -59,6 +60,24 @@ router.post('/login', function (req, res) {
 router.get('/owners', function (req, res) {
     User.findAll()
     .then(users => res.status(200).json(users))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
+router.get('/:id', function (req, res) {
+    User.findOne({
+        where: {id: req.params.id }
+    })
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json({ error: err}));
+})
+
+// Get all users
+router.get('/current', validateSession, function (req, res) {
+    console.log(req.user.id);
+    User.findOne({
+        where: { id: req.user.id }
+    })
+    .then(user => res.status(200).json(user))
     .catch(err => res.status(500).json({ error: err }));
 })
 

@@ -15,7 +15,9 @@ router.get('/mine', validateSession, (req, res) => {
     Pet.findAll({
         where: { ownerid: req.user.id }
     })
-    .then(pet => res.status(200).json(pet))
+    .then(pet => {
+        res.status(200).json(pet);
+    })
     .catch(err => res.status(500).json({ error: err }));
 })
 
