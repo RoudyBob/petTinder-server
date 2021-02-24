@@ -63,7 +63,7 @@ router.get('/owners', function (req, res) {
     .catch(err => res.status(500).json({ error: err }));
 })
 
-router.get('/:id', function (req, res) {
+router.get('/byid/:id', function (req, res) {
     User.findOne({
         where: {id: req.params.id }
     })
