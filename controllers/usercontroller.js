@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const Sequelize = require('../db');
 const User = require('../db').import('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -74,7 +75,7 @@ router.get('/byid/:id', function (req, res) {
 
 // Get all users
 router.get('/current', validateSession, function (req, res) {
-    console.log(req.user.id);
+    // console.log(req.user.id);
     User.findOne({
         where: { id: req.user.id }
     })
@@ -85,18 +86,12 @@ router.get('/current', validateSession, function (req, res) {
 // Add Liked Pet to User
 router.put('/:petid', validateSession, function (req, res){
 
-    const updateUser = {
-        username: req.user.username,
-        password: req.user.password,
-        firstname: req.user.firstname,
-        lastname: req.user.lastname,
-        // likedpets: req.user.likedpets.push("5")
-        likedpets: []
-    }
-    const query = { where: { id: req.user.id } }
-
-    User.update(updateUser, query)
-    .then(user => res.status(200).json(user))
+    // const query = { where: { id: req.user.id } }
+    User.update(
+        {likedpets: Sequelize.fn('array_append', Sequelize.col('likedpets'), req.params.petid)}, 
+        {where: {id: req.user.id}}
+    )
+    .then(recordsChanged => res.status(200).json(recordsChanged))
     .catch(err => res.status(500).json({error:err}))
 })
 
