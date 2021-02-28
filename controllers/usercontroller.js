@@ -84,11 +84,22 @@ router.get('/current', validateSession, function (req, res) {
 })
 
 // Add Liked Pet to User
-router.put('/:petid', validateSession, function (req, res){
+router.put('/like/:petid', validateSession, function (req, res){
 
     // const query = { where: { id: req.user.id } }
     User.update(
         {likedpets: Sequelize.fn('array_append', Sequelize.col('likedpets'), req.params.petid)}, 
+        {where: {id: req.user.id}}
+    )
+    .then(recordsChanged => res.status(200).json(recordsChanged))
+    .catch(err => res.status(500).json({error:err}))
+})
+
+// Remove Liked Pet from User
+router.put('/unlike/:petid', validateSession, function (req, res){
+
+    User.update(
+        {likedpets: Sequelize.fn('array_remove', Sequelize.col('likedpets'), req.params.petid)}, 
         {where: {id: req.user.id}}
     )
     .then(recordsChanged => res.status(200).json(recordsChanged))
