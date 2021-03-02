@@ -38,14 +38,6 @@ router.post('/', validateSession, function (req, res) {
     .catch(err => res.status(500).json({ error: err }));
 });
 
-// This one gets by ID if the owner owns the pet
-// router.get('/:id', validateSession, function (req, res) {
-//     Pet.findOne({
-//         where: { ownerid: req.user.id, id: req.params.id }
-//     })
-//     .then(pet => res.status(200).json(pet))
-//     .catch(err => res.status(500).json({ error: err }));
-// });
 
 // This one gets by ID regardless of owner
 router.get('/:id', validateSession, function (req, res) {
@@ -55,15 +47,6 @@ router.get('/:id', validateSession, function (req, res) {
     .then(pet => res.status(200).json(pet))
     .catch(err => res.status(500).json({ error: err }));
 });
-
-// This one gets by gender if the owner owns the pet
-// router.get('/gender/:gender', validateSession, function (req, res) {
-//     Pet.findAll({
-//         where: { ownerid: req.user.id, gender: req.params.gender }
-//     })
-//     .then(pet => res.status(200).json(pet))
-//     .catch(err => res.status(500).json({ error: err }));
-// });
 
 // This one gets by gender regardless of owner
 router.get('/gender/:gender', validateSession, function (req, res) {
