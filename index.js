@@ -43,6 +43,6 @@ app.post('/upload', (req, res) => {
     });
 })
 
-app.listen(3000, function(){
-    console.log('The app is on port 3000');
+app.listen(process.env.PORT, function(){
+    console.log(`App is listening on port ${process.env.PORT}`);
 })
