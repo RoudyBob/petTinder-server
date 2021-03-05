@@ -38,6 +38,14 @@ router.post('/', validateSession, function (req, res) {
     .catch(err => res.status(500).json({ error: err }));
 });
 
+// This one gets by ID if the owner owns the pet
+// router.get('/:id', validateSession, function (req, res) {
+//     Pet.findOne({
+//         where: { ownerid: req.user.id, id: req.params.id }
+//     })
+//     .then(pet => res.status(200).json(pet))
+//     .catch(err => res.status(500).json({ error: err }));
+// });
 
 // This one gets by ID regardless of owner
 router.get('/:id', validateSession, function (req, res) {
@@ -48,12 +56,19 @@ router.get('/:id', validateSession, function (req, res) {
     .catch(err => res.status(500).json({ error: err }));
 });
 
+// This one gets by gender if the owner owns the pet
+// router.get('/gender/:gender', validateSession, function (req, res) {
+//     Pet.findAll({
+//         where: { ownerid: req.user.id, gender: req.params.gender }
+//     })
+//     .then(pet => res.status(200).json(pet))
+//     .catch(err => res.status(500).json({ error: err }));
+// });
+
 // This one gets by gender regardless of owner
 router.get('/gender/:gender', validateSession, function (req, res) {
     Pet.findAll({
-        where: 
-            Sequelize.where(
-                Sequelize.fn('lower', Sequelize.col('gender')), req.params.gender.toLowerCase())
+        where: { gender: req.params.gender }
     })
     .then(pet => res.status(200).json(pet))
     .catch(err => res.status(500).json({ error: err }));
@@ -79,6 +94,7 @@ router.put('/:id', validateSession, function (req, res){
 });
 
 //This endpoint deletes a pet by id.  It checks that the ownerid matches the user that is logged in.
+
 router.delete('/:id', validateSession, function (req, res) {
     const query = {where: {id: req.params.id, ownerid: req.user.id}};
 
@@ -98,21 +114,6 @@ router.get('/city/:city', validateSession, function (req, res) {
     .catch(err => res.status(500).json({ error: err }));
 });
 
-//This one gets all pets by gender by city
-router.get('/city/:city/:gender', validateSession, function (req, res) {
-    Pet.findAll({
-        where: 
-            Sequelize.and(
-                Sequelize.where(
-                    Sequelize.fn('lower', Sequelize.col('gender')), req.params.gender.toLowerCase()),
-                Sequelize.where(
-                    Sequelize.fn('lower', Sequelize.col('citylocation')), req.params.city.toLowerCase())
-            )
-    })
-    .then(pet => res.status(200).json(pet))
-    .catch(err => res.status(500).json({ error: err }));
-});
-
 // This one gets by state regardless of owner
 router.get('/state/:state', validateSession, function (req, res) {
     Pet.findAll({
@@ -120,21 +121,6 @@ router.get('/state/:state', validateSession, function (req, res) {
             Sequelize.where(
               Sequelize.fn('lower', Sequelize.col('statelocation')), req.params.state.toLowerCase())
         })
-    .then(pet => res.status(200).json(pet))
-    .catch(err => res.status(500).json({ error: err }));
-});
-
-// This one gets all pets by gender by state
-router.get('/state/:state/:gender', validateSession, function (req, res) {
-    Pet.findAll({
-        where: 
-            Sequelize.and(
-                Sequelize.where(
-                    Sequelize.fn('lower', Sequelize.col('gender')), req.params.gender.toLowerCase()),
-                Sequelize.where(
-                    Sequelize.fn('lower', Sequelize.col('statelocation')), req.params.state.toLowerCase())
-            )
-    })
     .then(pet => res.status(200).json(pet))
     .catch(err => res.status(500).json({ error: err }));
 });

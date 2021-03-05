@@ -1,0 +1,9 @@
+heroku create pettinder-server
+
+https://pettinder-server.herokuapp.com/
+
+heroku addons:create heroku-postgresql:hobby-dev --app pettinder-server
+
+git add . 
+git commit -m "heroku deploy"
+git push heroku master
