@@ -1,7 +1,9 @@
 const router = require('express').Router();
+const Sequelize = require('../db');
 const User = require('../db').import('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const validateSession = require ('../middleware/validate-session');
 
 router.post('/signup', function (req, res) {
     User.create({
@@ -53,6 +55,55 @@ router.post('/login', function (req, res) {
             };
         })
     .catch(err => res.status(500).json({error: err}));
+})
+
+// Get all users
+router.get('/owners', function (req, res) {
+    User.findAll()
+    .then(users => res.status(200).json(users))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
+// Get user by ID
+router.get('/byid/:id', function (req, res) {
+    User.findOne({
+        where: {id: req.params.id }
+    })
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json({ error: err}));
+})
+
+// Get all users
+router.get('/current', validateSession, function (req, res) {
+    // console.log(req.user.id);
+    User.findOne({
+        where: { id: req.user.id }
+    })
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
+// Add Liked Pet to User
+router.put('/like/:petid', validateSession, function (req, res){
+
+    // const query = { where: { id: req.user.id } }
+    User.update(
+        {likedpets: Sequelize.fn('array_append', Sequelize.col('likedpets'), req.params.petid)}, 
+        {where: {id: req.user.id}}
+    )
+    .then(recordsChanged => res.status(200).json(recordsChanged))
+    .catch(err => res.status(500).json({error:err}))
+})
+
+// Remove Liked Pet from User
+router.put('/unlike/:petid', validateSession, function (req, res){
+
+    User.update(
+        {likedpets: Sequelize.fn('array_remove', Sequelize.col('likedpets'), req.params.petid)}, 
+        {where: {id: req.user.id}}
+    )
+    .then(recordsChanged => res.status(200).json(recordsChanged))
+    .catch(err => res.status(500).json({error:err}))
 })
 
 module.exports = router;
