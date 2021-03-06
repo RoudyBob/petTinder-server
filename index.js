@@ -2,13 +2,21 @@ const express = require('express');
 require('dotenv').config();
 const app = express();
 const sequelize = require('./db');
-const fileUpload = require('express-fileupload');
 const cors = require('cors');
 
-// middleware for file upload
-app.use(express.static('public')); // to access the files in public folder
-app.use(cors()); // this enables CORS requests
-app.use(fileUpload());
+const multer = require ('multer');
+const uploadImage = require('./helpers/fileUploader');
+
+const multerMid = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024, // Maximum file size is 10MB
+    },
+});
+
+//middleware for file upload
+app.disable('x-powered-by');
+app.use(multerMid.single('file'))
 
 //import JSON support for Express
 app.use(express.json());
@@ -26,21 +34,28 @@ app.use('/pet', pet);
 app.use('/user', user);
 
 // file upload api
-app.post('/upload', (req, res) => {
-    if (!req.files) {
-        return res.status(500).send({ msg: "file is not found" })
+app.post('/upload', async (req, res, next) => {
+    try {
+      const myFile = req.file
+      const imageUrl = await uploadImage(myFile)
+  
+      res
+        .status(200)
+        .json({
+          message: "Upload was successful",
+          data: imageUrl
+        })
+    } catch (error) {
+      next(error)
     }
-        // accessing the file
-    const myFile = req.files.file;
-    //  mv() method places the file inside public directory
-    myFile.mv(`${__dirname}/public/${myFile.name}`, function (err) {
-        if (err) {
-            console.log(err)
-            return res.status(500).send({ msg: "Error occured" });
-        }
-        // returing the response with file path and name
-        return res.send({name: myFile.name, path: `/${myFile.name}`});
-    });
+})
+  
+app.use((err, req, res, next) => {
+    res.status(500).json({
+        error: err,
+        message: 'Internal server error!',
+    })
+    next()
 })
 
 app.listen(process.env.PORT, function(){
