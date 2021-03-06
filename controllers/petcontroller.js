@@ -68,7 +68,9 @@ router.get('/:id', validateSession, function (req, res) {
 // This one gets by gender regardless of owner
 router.get('/gender/:gender', validateSession, function (req, res) {
     Pet.findAll({
-        where: { gender: req.params.gender }
+        where: 
+            Sequelize.where(
+                Sequelize.fn('lower', Sequelize.col('gender')), req.params.gender.toLowerCase())
     })
     .then(pet => res.status(200).json(pet))
     .catch(err => res.status(500).json({ error: err }));
@@ -114,6 +116,21 @@ router.get('/city/:city', validateSession, function (req, res) {
     .catch(err => res.status(500).json({ error: err }));
 });
 
+//This one gets all pets by gender by city
+router.get('/city/:city/:gender', validateSession, function (req, res) {
+    Pet.findAll({
+        where: 
+            Sequelize.and(
+                Sequelize.where(
+                    Sequelize.fn('lower', Sequelize.col('gender')), req.params.gender.toLowerCase()),
+                Sequelize.where(
+                    Sequelize.fn('lower', Sequelize.col('citylocation')), req.params.city.toLowerCase())
+            )
+    })
+    .then(pet => res.status(200).json(pet))
+    .catch(err => res.status(500).json({ error: err }));
+});
+
 // This one gets by state regardless of owner
 router.get('/state/:state', validateSession, function (req, res) {
     Pet.findAll({
@@ -121,6 +138,21 @@ router.get('/state/:state', validateSession, function (req, res) {
             Sequelize.where(
               Sequelize.fn('lower', Sequelize.col('statelocation')), req.params.state.toLowerCase())
         })
+    .then(pet => res.status(200).json(pet))
+    .catch(err => res.status(500).json({ error: err }));
+});
+
+// This one gets all pets by gender by state
+router.get('/state/:state/:gender', validateSession, function (req, res) {
+    Pet.findAll({
+        where: 
+            Sequelize.and(
+                Sequelize.where(
+                    Sequelize.fn('lower', Sequelize.col('gender')), req.params.gender.toLowerCase()),
+                Sequelize.where(
+                    Sequelize.fn('lower', Sequelize.col('statelocation')), req.params.state.toLowerCase())
+            )
+    })
     .then(pet => res.status(200).json(pet))
     .catch(err => res.status(500).json({ error: err }));
 });
