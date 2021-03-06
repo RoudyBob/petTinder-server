@@ -16,7 +16,9 @@ const multerMid = multer({
 
 //middleware for file upload
 app.disable('x-powered-by');
+app.use(cors()); // this enables CORS requests
 app.use(multerMid.single('file'))
+
 
 //import JSON support for Express
 app.use(express.json());
