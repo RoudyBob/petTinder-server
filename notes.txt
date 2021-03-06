@@ -7,3 +7,5 @@ heroku addons:create heroku-postgresql:hobby-dev --app pettinder-server
 git add . 
 git commit -m "heroku deploy"
 git push heroku master
+
+PLEASE WORK
